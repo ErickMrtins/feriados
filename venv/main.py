@@ -4,13 +4,20 @@ from datetime import datetime
 import pandas as pd
 import numpy as np
 
+'''
+    Lista com os nomes das cidades que deseja recuperar os feriados.
+'''
 
 cidades = ['curitiba-pr', 'colombo-pr', 'londrina-pr', 'americana-sp', 'piracicaba-sp',
            'guarulhos-sp', 'campinas-sp', 'sao_jose-sc', 'balneario_camboriu-sc']
 
-
+#Captura o ano atual!
 ano = datetime.now().year
+
+#abre arquivo csv no modo Escrita
 file = open("feriados.csv", "w")
+
+#Busca os feriados por Ano
 while ano < 2020:
     ano += 1
     for c in cidades:
@@ -29,18 +36,30 @@ while ano < 2020:
         tag = 'span'
         parametro = 'class'
         valorParametro = 'style_lista_feriados'
-        valorParametroFAcultativo = 'style_lista_facultativos'
+        valorParametroFacultativo = 'style_lista_facultativos'
 
 
         tag = res.findAll(tag, {parametro: valorParametro})
+        tagFacultativos = res.findAll(tag, {parametro: valorParametroFacultativo})
 
-        #print(c)
+
         for f in tag:
             f = f.getText().strip()
-            f = f.replace("-", ",").strip()
-            feriado = (f + ", " + c)
-            print(f + ", " + c)
+            nomeFeriado = f[f.find('-'):]
+            nomeFeriado = nomeFeriado.replace("-", "")
+            f = f[:f.find('-')]
+            feriado = (f + ", " + nomeFeriado + ", " + c)
+            print(f + ", " + c + ", " + nomeFeriado)
             escrita = file.write(feriado + "\n")
+
+        for fac in tagFacultativos:
+            fac = fac.getText().strip()
+            nomeFeriado = fac[fac.find('-'):]
+            nomeFeriado = nomeFeriado.replace("-", "")
+            fac = fac[:f.find('-')]
+            feriadoFacultativo = (fac + ", " + nomeFeriado + ", " + c)
+            print(fac + ", " + nomeFeriado + ", " + c)
+            escrita = file.write(feriadoFacultativo + "\n")
 
 
 
