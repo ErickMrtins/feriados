@@ -12,13 +12,13 @@ cidades = ['curitiba-pr', 'colombo-pr', 'londrina-pr', 'americana-sp', 'piracica
            'guarulhos-sp', 'campinas-sp', 'sao_jose-sc', 'balneario_camboriu-sc']
 
 #Captura o ano atual!
-ano = datetime.now().year
+ano = datetime.now().year - 10
 
 #abre arquivo csv no modo Escrita
 file = open("feriados.csv", "w")
 
 #Busca os feriados por Ano
-while ano < 2020:
+while ano < 2025:
     ano += 1
     for c in cidades:
         endereco = "http://www.feriados.com.br/feriados-" + c + ".php?ano=" + str(ano)
@@ -38,12 +38,10 @@ while ano < 2020:
         valorParametro = 'style_lista_feriados'
         valorParametroFacultativo = 'style_lista_facultativos'
 
-
-        tag = res.findAll(tag, {parametro: valorParametro})
-        tagFacultativos = res.findAll(tag, {parametro: valorParametroFacultativo})
+        tags = res.findAll(tag, {parametro: valorParametro})
 
 
-        for f in tag:
+        for f in tags:
             f = f.getText().strip()
             nomeFeriado = f[f.find('-'):]
             nomeFeriado = nomeFeriado.replace("-", "")
@@ -52,14 +50,18 @@ while ano < 2020:
             print(f + ", " + c + ", " + nomeFeriado)
             escrita = file.write(feriado + "\n")
 
+
+        tagFacultativos = res.findAll(tag, {parametro: valorParametroFacultativo})
+
         for fac in tagFacultativos:
             fac = fac.getText().strip()
             nomeFeriado = fac[fac.find('-'):]
-            nomeFeriado = nomeFeriado.replace("-", "")
-            fac = fac[:f.find('-')]
-            feriadoFacultativo = (fac + ", " + nomeFeriado + ", " + c)
-            print(fac + ", " + nomeFeriado + ", " + c)
-            escrita = file.write(feriadoFacultativo + "\n")
+            nomeFeriado = nomeFeriado.replace("-", "").strip()
+            fac = fac[:fac.find('-')]
+            if nomeFeriado == "Carnaval" or nomeFeriado == "Corpus Christi":
+                feriadoFacultativo = (fac + ", " + nomeFeriado + ", " + c)
+                print(fac + ", " + nomeFeriado + ", " + c)
+                escrita = file.write(feriadoFacultativo + "\n")
 
 
 
